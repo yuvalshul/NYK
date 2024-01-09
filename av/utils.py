@@ -41,4 +41,5 @@ class Drive:
         return f"drive name:{self.name} | drive type:{self.type} | drive ID:{self.id}"
 
     def is_flash_drive(self):
-        return self.type == "2"
+        return self.type == "2" and self.id is not None
+        
