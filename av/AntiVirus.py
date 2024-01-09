@@ -29,8 +29,8 @@ class AntiVirus:
                 out = subprocess.check_output(args='wmic logicaldisk get DriveType, caption, VolumeSerialNumber',
                                               shell=True)
                 shell_lines = out.decode('utf-8').strip().split('\r\r\n')[1::]
-                flash_drives = [Drive(shell_line) for shell_line in shell_lines
-                                if Drive(shell_line).is_flash_drive() and Drive(shell_line).id is not None]
+                drives = [Drive(shell_line) for shell_line in shell_lines]
+                flash_drives = [drive for drive in drives if drive.is_flash_drive()]
                 self.update_connected_devices(flash_drives)
                 [self.handle(flash_drive) for flash_drive in flash_drives if flash_drive not in self.connected_drives]
                 time.sleep(1)
