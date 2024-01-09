@@ -5,8 +5,8 @@ class Scanner:
     def __init__(self):
         self._endings = [".py", ".exe", ".js"]  # add more
 
-    def scan(self, flash_drive_name):
-        listdir = os.listdir(flash_drive_name)
+    def scan(self, flash_drive):
+        listdir = os.listdir(flash_drive.name)
         return [dir_name for dir_name in listdir if self.potential_threat(dir_name)]
 
     def potential_threat(self, dir_name):
