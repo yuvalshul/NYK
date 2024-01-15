@@ -1,16 +1,26 @@
 import os
+# import vt
 
 
 class Scanner:
     def __init__(self):
-        self._endings = [".py", ".exe", ".js"]  # add more
+        self._endings = [".py", ".exe", ".js", ".java", ".ts", ".inf"]  # add more
+        # self._API_KEY = "6a9aa6800c30e9afa96b01eec1d7c35274f040f710eda0c7563362157196cf62"
+        # self.client = vt.Client(self._API_KEY)
 
     def scan(self, flash_drive):
-        listdir = os.listdir(flash_drive.name)
-        return [dir_name for dir_name in listdir if self.potential_threat(dir_name)]
+        pot_threats = []
+        for root, dirs, files in os.walk(flash_drive.name):
+            for file in files:
+                if self.potential_threat(file):
+                    file_path = os.path.join(root, file)
+                    # pot_threat = (file, file_path)
+                    pot_threats.append(file_path)
+        return pot_threats
 
     def potential_threat(self, dir_name):
-        return self.bad_ending(dir_name)  # or self.has_url(dir_name)
+        return self.bad_ending(dir_name) or dir_name.startswith("autorun") or dir_name.startswith("autoplay")
+        # or self.has_url(dir_name)
 
     def bad_ending(self, dir_name):
         for ending in self._endings:
@@ -18,12 +28,13 @@ class Scanner:
                 return True
         return False
 
-    def deal(self, dir_path):
-        print(f"Dealing with bad file at {dir_path}")
+    @staticmethod  # can be removed
+    def remove(file_to_remove):
+        print(f"os.remove({file_to_remove})")
 
 
 def parse_shell_line(shell_line):
-    attributes = list(filter(lambda attr: attr != "",shell_line.strip().split(" ")))
+    attributes = list(filter(lambda attr: attr != "", shell_line.strip().split(" ")))
     return attributes[0], attributes[1], attributes[2] if len(attributes) == 3 else None
 
 
@@ -42,4 +53,3 @@ class Drive:
 
     def is_flash_drive(self):
         return self.type == "2" and self.id is not None
-        
