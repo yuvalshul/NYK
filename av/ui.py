@@ -1,4 +1,7 @@
+import virustotalhandler
+import webbrowser
 from tkinter import *
+from tkinter import ttk
 
 SHIELD_LOGO = """⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⣾⣿⣿⣷⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -48,6 +51,27 @@ def menu(pot_threats, on_remove):
     #     for i in range(len(files)):
     #         if deleted[i]:
     #             c_d[0].grid_remove
+    def handle_vt(file_path):
+        output = virustotalhandler.start(file_path)
+        vt_window = Tk()
+        vt_window.config(pady=10, padx=10)
+        vt_window.title("VirusTotal Scan")
+
+        if output['positives'] == 0:
+            print("ok")
+            safe_label = Label(vt_window, text="According to VirusTotal the file is SAFE", fg="green")
+            safe_label.grid(row=0, column=0)
+        else:
+            unsafe_label = Label(vt_window,
+                                 text=f"VirusTotal reported {output['positives']} "
+                                      f"engines found that this file might be malicious",
+                                 fg="red")
+            unsafe_label.pack()
+            url_label = ttk.Label(vt_window, text="For full VirusTotal analysis", cursor="hand2", foreground="blue")
+            url_label.pack()
+            url_label.bind("<Button-1>", lambda event: webbrowser.open(output['permalink']))
+
+        vt_window.wait_window()
 
     def on_check(checked_path, selected_paths):
         selected_paths.append(checked_path) if checked_path not in selected_paths \
@@ -62,6 +86,7 @@ def menu(pot_threats, on_remove):
                 content = f"Cant read {file}.\nError: {e}"
 
         display_window = Tk()
+        display_window.config(padx=10, pady=10)
         display_window.title(f"Displaying {file}")
 
         content_label = Label(display_window, text=content)
@@ -91,10 +116,17 @@ def menu(pot_threats, on_remove):
             display_button = Button(window, text="Display", command=lambda index=i: display_file(pot_threats[index]))
             display_button.grid(row=i + 2, column=2, pady=5)
 
+        vt_btn = Button(window, text="VirusTotal", command=lambda index=i: handle_vt(pot_threats[index]))
+        vt_btn.grid(row=i + 2, column=3)
+
         # checkbox_displaybtn.append([checkbox, display_button])
 
     remove_btn = Button(window, text="Remove Selected Files", font=("TkDefaultFont", 13), fg="red",
                         command=lambda: on_remove(selected_files))
     remove_btn.grid(row=len(pot_threats) + 2, column=0, pady=5, columnspan=3)
+
+    cont_btn = Button(window, text="Continue Without Any Action", font=("TkDefaultFont", 13), fg="green",
+                      command=lambda: window.destroy())
+    cont_btn.grid(row=len(pot_threats) + 2, column=2, pady=5, columnspan=3)
 
     window.wait_window()
