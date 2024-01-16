@@ -1,26 +1,22 @@
 import os
-# import vt
 
 
 class Scanner:
     def __init__(self):
         self._endings = [".py", ".exe", ".js", ".java", ".ts", ".inf"]  # add more
-        # self._API_KEY = "6a9aa6800c30e9afa96b01eec1d7c35274f040f710eda0c7563362157196cf62"
-        # self.client = vt.Client(self._API_KEY)
 
     def scan(self, flash_drive):
         pot_threats = []
         for root, dirs, files in os.walk(flash_drive.name):
             for file in files:
-                if self.potential_threat(file):
-                    file_path = os.path.join(root, file)
-                    # pot_threat = (file, file_path)
+                file_path = os.path.join(root, file)
+                if self.potential_threat(file, file_path):
                     pot_threats.append(file_path)
         return pot_threats
 
-    def potential_threat(self, dir_name):
+    def potential_threat(self, dir_name, dir_path):
         return self.bad_ending(dir_name) or dir_name.startswith("autorun") or dir_name.startswith("autoplay")
-        # or self.has_url(dir_name)
+        # or self.has_url(dir_path=dir_path)
 
     def bad_ending(self, dir_name):
         for ending in self._endings:
@@ -28,13 +24,27 @@ class Scanner:
                 return True
         return False
 
+    # @staticmethod
+    # def has_url(dir_path):
+    #     try:
+    #         with open(dir_path, "r") as f:
+    #             content = f.read()
+    #     except Exception as e:
+    #         return False
+    #
+    #     for token in content.split():
+    #         if token.startswith("http://"):
+    #             return True
+    #
+    #     return False
+
     @staticmethod  # can be removed
     def remove(file_to_remove):
         print(f"os.remove({file_to_remove})")
 
 
 def parse_shell_line(shell_line):
-    attributes = list(filter(lambda attr: attr != "", shell_line.strip().split(" ")))
+    attributes = list(filter(lambda attr: attr != "", shell_line.strip().split()))
     return attributes[0], attributes[1], attributes[2] if len(attributes) == 3 else None
 
 

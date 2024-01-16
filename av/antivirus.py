@@ -92,6 +92,13 @@ class AntiVirus:
         ui.menu(pot_threats, on_remove=self.remove)
 
     def remove(self, files_to_remove):
+        if len(files_to_remove) == 0:
+            messagebox.showinfo(
+                title="No Selected Files",
+                message="There is no selected files ro remove"
+            )
+            return
+
         files_str = "\n".join(f"*{file}" for file in files_to_remove)
         remove = messagebox.askyesno(
             title="Just Making Sure",
@@ -105,4 +112,8 @@ class AntiVirus:
                     results.append(True)
                 except OSError:
                     results.append(False)
+
+            return results
             # give the user info about which files we weren't able to remove due to os error
+        else:
+            return False
