@@ -33,7 +33,6 @@ def start_popup(window):
 
 
 def end_popup(window):  # does not work yet
-    print("start ending...")
     popup = Toplevel(window)
     popup.title("Anti Virus Ending")
     ave = Label(popup, text="Anti Virus Ending...", font=("TkDefaultFont", 16))
@@ -44,7 +43,6 @@ def end_popup(window):  # does not work yet
     popup.after(2000, popup.destroy)
     popup.wait_window()
     window.destroy()
-    print("end ending...")
 
 def menu(pot_threats, on_remove):
     window = Tk()
