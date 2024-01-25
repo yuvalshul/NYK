@@ -44,10 +44,25 @@ class AntiVirus:
                 break
 
     def lin_av(self):
-        messagebox.showinfo(
-            title="Linux not supported yet",
-            message="Linux os is yet to be supported by this anti virus"
-        )
+        import pyudev
+        ui.start_popup(self.window)
+        context = pyudev.Context()
+        monitor = pyudev.Monitor.from_netlink(context)
+        monitor.filter_by(subsystem='block', device_type='disk')
+        try:
+            for device in iter(monitor.poll, None):
+                if device.action == 'add':
+                    time.sleep(0.5)
+                    block_dev_path = device.device_node
+                    result = subprocess.run(["lsblk", block_dev_path], capture_output=True, text=True)
+                    path = result.stdout.split()[-1]
+                    d_name = path
+                    d_type = 2
+                    d_id = path.split("/")[-1]
+                    flash_drive = Drive(d_name, d_type, d_id)
+                    self.handle(flash_drive)
+        except KeyboardInterrupt:
+            pass
 
     def handle(self, flash_drive):
         self.connected_drives.append(flash_drive)
