@@ -51,6 +51,8 @@ def parse_shell_line(shell_line):
 class Drive:
     def __init__(self, shell_line):
         self.name, self.type, self.id = parse_shell_line(shell_line)
+    def __init__(self, name, type, id):
+        self.name, self.type, self.id = name, type, id
 
     def __eq__(self, other):
         if isinstance(other, Drive):
