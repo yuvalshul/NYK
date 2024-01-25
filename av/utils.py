@@ -16,27 +16,12 @@ class Scanner:
 
     def potential_threat(self, dir_name, dir_path):
         return self.bad_ending(dir_name) or dir_name.startswith("autorun") or dir_name.startswith("autoplay")
-        # or self.has_url(dir_path=dir_path)
 
     def bad_ending(self, dir_name):
         for ending in self._endings:
             if dir_name.endswith(ending):
                 return True
         return False
-
-    # @staticmethod
-    # def has_url(dir_path):
-    #     try:
-    #         with open(dir_path, "r") as f:
-    #             content = f.read()
-    #     except Exception as e:
-    #         return False
-    #
-    #     for token in content.split():
-    #         if token.startswith("http://"):
-    #             return True
-    #
-    #     return False
 
     @staticmethod  # can be removed
     def remove(file_to_remove):
@@ -49,10 +34,11 @@ def parse_shell_line(shell_line):
 
 
 class Drive:
-    def __init__(self, shell_line):
-        self.name, self.type, self.id = parse_shell_line(shell_line)
-    def __init__(self, name, type, id):
-        self.name, self.type, self.id = name, type, id
+    def __init__(self, name=None, type=None, id=None, shell_line=None):
+        if shell_line:
+            self.name, self.type, self.id = parse_shell_line(shell_line)
+        else:
+            self.name, self.type, self.id = name, type, id
 
     def __eq__(self, other):
         if isinstance(other, Drive):
