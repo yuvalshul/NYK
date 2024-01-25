@@ -1,6 +1,6 @@
 import virustotalhandler
 import webbrowser
-from tkinter import Label, Button, Toplevel, Tk, Checkbutton, W, ttk
+from tkinter import Label, Button, Toplevel, Tk, Checkbutton, W, ttk, Canvas, LEFT, BOTH, RIGHT, Y
 
 SHIELD_LOGO = """⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⣾⣿⣿⣷⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -45,8 +45,18 @@ def start_popup(window):
 #     popup.after(2000, popup.destroy)
 
 def menu(pot_threats, on_remove):
+    window = Tk()
+    window.config(pady=10, padx=10)
+    window.title("Menu")
+    pages = [pot_threats[i:i+7] for i in range(0, len(pot_threats), 7)]
+    page_index = 0
+
+    def clear_window():
+        for widget in window.winfo_children():
+            widget.destroy()
+
     def handle_remove(selected_f, grid_rows):
-        print(selected_f)
+        # print(selected_f)
         results = on_remove(selected_f)
         if results:
             row_to_name = [row[0] for row in grid_rows]
@@ -60,17 +70,24 @@ def menu(pot_threats, on_remove):
                         element.grid_remove()
             for f in remove_me:
                 selected_f.remove(f)
+                pot_threats.remove(f)
+
+            nonlocal pages, page_index
+            pages = pages = [pot_threats[i:i+7] for i in range(0, len(pot_threats), 7)]
+            page_index = min(page_index, len(pages)-1)
+            clear_window()
+            display_menu()
 
     def handle_vt(file_path):
         output = virustotalhandler.start(file_path)
         vt_window = Tk()
         vt_window.config(pady=10, padx=10)
         vt_window.title("VirusTotal Scan")
-        if not output:
+        if not output or output.get('positives') is None:
             err_label = Label(vt_window, text="There was an error trying to scan this file")
             err_label.pack()
         elif output['positives'] == 0:
-            safe_label = Label(vt_window, text="According to VirusTotal the file is SAFE", fg="green")
+            safe_label = Label(vt_window, text="According to VirusTotal this file is SAFE", fg="green")
             safe_label.pack()
         else:
             unsafe_label = Label(vt_window,
@@ -78,7 +95,8 @@ def menu(pot_threats, on_remove):
                                       f"engines found that this file might be malicious",
                                  fg="red")
             unsafe_label.pack()
-            url_label = ttk.Label(vt_window, text="For full VirusTotal analysis", cursor="hand2", foreground="blue")
+            url_label = ttk.Label(vt_window, text="For full VirusTotal analysis click here" , cursor="hand2",
+                                  foreground="blue")
             url_label.pack()
             url_label.bind("<Button-1>", lambda event: webbrowser.open(output['permalink']))
 
@@ -91,7 +109,7 @@ def menu(pot_threats, on_remove):
     def display_file(file):
         try:
             with open(file, "r") as f:
-                content = f.read()
+                content = f.read().strip()
         except Exception as e:
             content = f"Cant read {file}.\nError: {e}"
 
@@ -99,45 +117,104 @@ def menu(pot_threats, on_remove):
         display_window.config(padx=10, pady=10)
         display_window.title(f"Displaying {file}")
 
-        content_label = Label(display_window, text=content)
-        content_label.grid(row=0, column=0)
+        canvas = Canvas(display_window)
+        canvas.pack(side=LEFT, fill=BOTH, expand=True)
+
+        scrollbar = ttk.Scrollbar(display_window, orient="vertical", command=canvas.yview)
+        scrollbar.pack(side=RIGHT, fill=Y)
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        frame = ttk.Frame(canvas)
+        canvas.create_window((0, 0), window=frame, anchor="nw")
+
+        content_label = ttk.Label(frame, text=content)
+        content_label.pack(pady=5)
+
+        frame.update_idletasks()
+        canvas.config(scrollregion=canvas.bbox("all"))
+
+        # Bind the scrollbar to the canvas
+        canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+        frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
 
         display_window.wait_window()
 
-    window = Tk()
-    window.config(pady=10, padx=10)
-    window.title("Menu")
+    def put_av_labels():
+        av_label = Label(window, text="AntiVirus", font=("TkDefaultFont", 16))
+        av_label.grid(row=0, column=0, columnspan=3)
 
-    av_label = Label(window, text="AntiVirus", font=("TkDefaultFont", 16))
-    av_label.grid(row=0, column=0, columnspan=3)
+        shield_label = Label(window, text=SHIELD_LOGO)
+        shield_label.grid(row=1, column=0, columnspan=3)
 
-    shield_label = Label(window, text=SHIELD_LOGO)
-    shield_label.grid(row=1, column=0, columnspan=3)
+    def handle_next():
+        nonlocal page_index
+        page_index += 1
+        clear_window()
+        display_menu()
 
-    selected_files = []
-    rows = []
+    def handle_prev():
+        nonlocal page_index
+        page_index -= 1
+        clear_window()
+        display_menu()
 
-    for i in range(len(pot_threats)):
-        checkbox = Checkbutton(window, text=pot_threats[i], wraplength=300,
-                               command=lambda index=i: handle_check(pot_threats[index], selected_files))
-        checkbox.grid(row=i + 2, column=0, pady=5, sticky=W)
+    def displayable(file):
+        try:
+            with open(file, "r") as f:
+                f.read(10)
+                return True
+        except Exception:
+            return False
 
-        vt_btn = Button(window, text="VirusTotal", command=lambda index=i: handle_vt(pot_threats[index]))
-        vt_btn.grid(row=i + 2, column=2, pady=5, padx=2)
-
-        if not pot_threats[i].endswith(".exe"):
-            display_button = Button(window, text="Display", command=lambda index=i: display_file(pot_threats[index]))
-            display_button.grid(row=i + 2, column=1, pady=5, padx=2)
-            rows.append((pot_threats[i], checkbox, display_button, vt_btn))
+    def nav_btns():
+        if len(pages) <= 1:
+            return 2
         else:
-            rows.append((pot_threats[i], checkbox, vt_btn))
+            if page_index < len(pages)-1:
+                next_btn = Button(window, text="Next Page", command=handle_next)
+                next_btn.grid(row=2, column=2, pady=10, sticky=W)
 
-    remove_btn = Button(window, text="Remove Selected Files", font=("TkDefaultFont", 13), fg="red",
-                        command=lambda: handle_remove(selected_files, rows))
-    remove_btn.grid(row=len(pot_threats) + 2, column=0, pady=5, columnspan=3)
+            if page_index > 0:
+                prev_btn = Button(window, text="Prev Page", command=handle_prev)
+                prev_btn.grid(row=2, column=0, pady=10, sticky=W)
 
-    cont_btn = Button(window, text="End Scan", font=("TkDefaultFont", 13), fg="green",
-                      command=lambda: window.destroy())
-    cont_btn.grid(row=len(pot_threats) + 3, column=0, pady=5, columnspan=3)
+            return 3
 
-    window.wait_window()
+    def display_menu():
+        put_av_labels()
+
+        curr_page = pages[page_index]
+        selected_files = []  # per page
+        rows = []
+
+        base_indent = nav_btns()
+
+        for i in range(len(curr_page)):
+            checkbox = Checkbutton(window, text=curr_page[i], wraplength=300,
+                                   command=lambda index=i: handle_check(curr_page[index], selected_files))
+            checkbox.grid(row=i + base_indent, column=0, pady=5, sticky=W)
+
+            vt_btn = Button(window, text="VirusTotal", command=lambda index=i: handle_vt(curr_page[index]))
+            vt_btn.grid(row=i + base_indent, column=2, pady=5, padx=2)
+
+            # trust_btn = Button(window, text="Trust File", command=lambda index=i: print(f"handle_trust({curr_page[index]})"))
+            # trust_btn.grid(row=i + base_indent, column=3, pady=5, padx=2)
+
+            if displayable(curr_page[i]):
+                display_button = Button(window, text="Display", command=lambda index=i: display_file(curr_page[index]))
+                display_button.grid(row=i + base_indent, column=1, pady=5, padx=2)
+                rows.append((curr_page[i], checkbox, display_button, vt_btn))
+            else:
+                rows.append((curr_page[i], checkbox, vt_btn))
+
+        remove_btn = Button(window, text="Remove Selected Files", font=("TkDefaultFont", 13), fg="red",
+                            command=lambda: handle_remove(selected_files, rows))
+        remove_btn.grid(row=len(curr_page) + base_indent, column=0, pady=5, columnspan=3)
+
+        cont_btn = Button(window, text="End Scan", font=("TkDefaultFont", 13), fg="green",
+                          command=lambda: window.destroy())
+        cont_btn.grid(row=len(curr_page) + base_indent + 1, column=0, pady=5, columnspan=3)
+
+        window.wait_window()
+
+    display_menu()
