@@ -35,7 +35,7 @@ class AntiVirus:
                 out = subprocess.check_output(args='wmic logicaldisk get DriveType, caption, VolumeSerialNumber',
                                               shell=True)
                 shell_lines = out.decode('utf-8').strip().split('\r\r\n')[1::]
-                drives = [Drive(shell_line) for shell_line in shell_lines]
+                drives = [Drive(shell_line=shell_line) for shell_line in shell_lines]
                 flash_drives = [drive for drive in drives if drive.is_flash_drive()]
                 self.update_connected_devices(flash_drives)
                 [self.handle(flash_drive) for flash_drive in flash_drives if flash_drive not in self.connected_drives]
@@ -65,7 +65,7 @@ class AntiVirus:
                     d_type = 2
                     d_id = path.split("/")[-1]
                     
-                    flash_drive = Drive(d_name, d_type, d_id)
+                    flash_drive = Drive(name=d_name, type=d_type, id=d_id)
                     self.handle(flash_drive)
         except KeyboardInterrupt:
             pass
