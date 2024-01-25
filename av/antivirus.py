@@ -42,6 +42,7 @@ class AntiVirus:
                 time.sleep(1)
             except KeyboardInterrupt:
                 break
+        ui.end_popup(self.window)
 
     def lin_av(self):
         import pyudev
@@ -55,14 +56,20 @@ class AntiVirus:
                     time.sleep(0.5)
                     block_dev_path = device.device_node
                     result = subprocess.run(["lsblk", block_dev_path], capture_output=True, text=True)
-                    path = result.stdout.split()[-1]
+                    try:
+                        path = result.stdout.split()[-1]
+                    except IndexError:
+                        pass
+
                     d_name = path
                     d_type = 2
                     d_id = path.split("/")[-1]
+                    
                     flash_drive = Drive(d_name, d_type, d_id)
                     self.handle(flash_drive)
         except KeyboardInterrupt:
             pass
+        ui.end_popup(self.window)
 
     def handle(self, flash_drive):
         self.connected_drives.append(flash_drive)

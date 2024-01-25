@@ -22,7 +22,6 @@ SHIELD_LOGO = """⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣄⠀⠀⠀⠀⠀
 def start_popup(window):
     popup = Toplevel(window)
     popup.title("Welcome To The Anti Virus")
-    # popup.geometry("300x100")
     avs = Label(popup, text="Anti Virus Starting", font=("TkDefaultFont", 16))
     avs.pack(pady=10)
     sl = Label(popup, text=SHIELD_LOGO)
@@ -33,16 +32,19 @@ def start_popup(window):
     popup.wait_window()
 
 
-# def end_popup(window):  # does not work yet
-#     print("ending")
-#     popup = Toplevel(window)
-#     popup.title("Anti Virus Ending")
-#     ave = Label(popup, text="Anti Virus Ending...")
-#     ave.pack(pady=10)
-#     sl = Label(popup, text=SHIELD_LOGO)
-#     sl.pack(pady=10)
-#     # Close the popup after 2000 milliseconds (2 seconds)
-#     popup.after(2000, popup.destroy)
+def end_popup(window):  # does not work yet
+    print("start ending...")
+    popup = Toplevel(window)
+    popup.title("Anti Virus Ending")
+    ave = Label(popup, text="Anti Virus Ending...", font=("TkDefaultFont", 16))
+    ave.pack(pady=10)
+    sl = Label(popup, text=SHIELD_LOGO)
+    sl.pack(pady=10)
+    # Close the popup after 2000 milliseconds (2 seconds)
+    popup.after(2000, popup.destroy)
+    popup.wait_window()
+    window.destroy()
+    print("end ending...")
 
 def menu(pot_threats, on_remove):
     window = Tk()
@@ -54,9 +56,15 @@ def menu(pot_threats, on_remove):
     def clear_window():
         for widget in window.winfo_children():
             widget.destroy()
+    
+    def end_window():
+        put_av_labels()
+        end_label = Label(window, text="You have dealt with all pot threats!")
+        end_label.grid(row=2, column=0, columnspan=3)
+        ok_btn = Button(window, text="OK", command=lambda: window.destroy())
+        ok_btn.grid(row=3, column=0, columnspan=3)
 
     def handle_remove(selected_f, grid_rows):
-        # print(selected_f)
         results = on_remove(selected_f)
         if results:
             row_to_name = [row[0] for row in grid_rows]
@@ -74,9 +82,12 @@ def menu(pot_threats, on_remove):
 
             nonlocal pages, page_index
             pages = pages = [pot_threats[i:i+7] for i in range(0, len(pot_threats), 7)]
-            page_index = min(page_index, len(pages)-1)
             clear_window()
-            display_menu()
+            if len(pages) > 0:
+                page_index = min(page_index, len(pages)-1)
+                display_menu()
+            else:
+                end_window()
 
     def handle_vt(file_path):
         output = virustotalhandler.start(file_path)
