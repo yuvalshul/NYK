@@ -3,7 +3,7 @@ import os
 
 class Scanner:
     def __init__(self):
-        self._endings = [".py", ".exe", ".js", ".java", ".ts", ".inf"]  # add more
+        self._endings = [".py", ".exe", ".js", ".java", ".ts", ".inf", ".bat", ".cmd"]
 
     def scan(self, flash_drive):
         pot_threats = []
@@ -15,7 +15,8 @@ class Scanner:
         return pot_threats
 
     def potential_threat(self, dir_name, dir_path):
-        return self.bad_ending(dir_name) or dir_name.startswith("autorun") or dir_name.startswith("autoplay")
+        return (self.bad_ending(dir_name) or dir_name.startswith("autorun") or dir_name.startswith("autoplay")
+                or os.access(dir_path, os.X_OK))
 
     def bad_ending(self, dir_name):
         for ending in self._endings:
@@ -34,11 +35,11 @@ def parse_shell_line(shell_line):
 
 
 class Drive:
-    def __init__(self, name=None, type=None, id=None, shell_line=None):
+    def __init__(self, d_name=None, d_type=None, d_id=None, shell_line=None):
         if shell_line:
             self.name, self.type, self.id = parse_shell_line(shell_line)
         else:
-            self.name, self.type, self.id = name, type, id
+            self.name, self.type, self.id = d_name, d_type, d_id
 
     def __eq__(self, other):
         if isinstance(other, Drive):
