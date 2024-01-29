@@ -32,14 +32,13 @@ def start_popup(window):
     popup.wait_window()
 
 
-def end_popup(window):  # does not work yet
+def end_popup(window):
     popup = Toplevel(window)
     popup.title("Anti Virus Ending")
     ave = Label(popup, text="Anti Virus Ending...", font=("TkDefaultFont", 16))
     ave.pack(pady=10)
     sl = Label(popup, text=SHIELD_LOGO)
     sl.pack(pady=10)
-    # Close the popup after 2000 milliseconds (2 seconds)
     popup.after(2000, popup.destroy)
     popup.wait_window()
     window.destroy()
