@@ -93,7 +93,10 @@ class AntiVirus:
             self.handle_threats(flash_drive, pot_threats)
 
     def handle_threats(self, flash_drive, pot_threats):
-        pot_threats_str = "\n".join(f"*{path}" for path in pot_threats)
+        if len(pot_threats) > 10:
+            pot_threats_str = "\n".join(f"*{path}" for path in pot_threats[:10]) + ("\n."*3)
+        else:
+            pot_threats_str = "\n".join(f"*{path}" for path in pot_threats)
         further_action = messagebox.askyesno(
             title="Scanning Complete",
             message=f"The scan of '{flash_drive.name}' is complete\n"
