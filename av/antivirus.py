@@ -65,7 +65,7 @@ class AntiVirus:
                     d_type = 2
                     d_id = path.split("/")[-1]
                     
-                    flash_drive = Drive(name=d_name, type=d_type, id=d_id)
+                    flash_drive = Drive(d_name=d_name, d_type=d_type, d_id=d_id)
                     self.handle(flash_drive)
         except KeyboardInterrupt:
             pass
