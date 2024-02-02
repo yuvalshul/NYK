@@ -184,7 +184,6 @@ def lunch(config):
 def start_popup(window):
     popup = Toplevel(window)
     popup.title("Welcome To The Anti Virus")
-    # popup.geometry("300x100")
     avs = Label(popup, text="Anti Virus Starting", font=TITLE_FONT)
     avs.pack(pady=10)
     sl = Label(popup, text=SHIELD_LOGO)
