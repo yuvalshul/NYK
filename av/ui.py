@@ -1,5 +1,3 @@
-import time
-
 import virustotalhandler
 import webbrowser
 import copy
