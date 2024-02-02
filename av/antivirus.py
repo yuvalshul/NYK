@@ -5,10 +5,17 @@ import ui
 from utils import Scanner, Drive
 from tkinter import Tk, messagebox
 
+config = {
+    "bad_endings": [".py", ".exe", ".js", ".java", ".ts", ".inf", ".bat", ".cmd"],
+    "check_exe": True,
+    "bad_names": ["autorun", "autoplay"],
+}
+
 
 class AntiVirus:
     def __init__(self):
-        self.scanner = Scanner()
+        ui.lunch(config)
+        self.scanner = Scanner(config)
         self.os = platform.system()
         self.window = Tk()
         self.window.withdraw()
@@ -59,14 +66,16 @@ class AntiVirus:
                     try:
                         path = result.stdout.split()[-1]
                     except IndexError:
-                        pass
+                        continue
 
                     d_name = path
                     d_type = 2
                     d_id = path.split("/")[-1]
-                    
+
                     flash_drive = Drive(d_name=d_name, d_type=d_type, d_id=d_id)
                     self.handle(flash_drive)
+                elif device.action == 'remove':
+                    ...
         except KeyboardInterrupt:
             pass
         ui.end_popup(self.window)
