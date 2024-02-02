@@ -27,10 +27,7 @@ class Scanner:
         return dir_name.split('.')[0] in self.config["bad_names"]
 
     def check_exe(self, dir_path):
-        if self.config["check_exe"]:
-            return os.access(dir_path, os.X_OK)
-        else:
-            return False
+        return os.access(dir_path, os.X_OK) if self.config["check_exe"] else False
 
     @staticmethod  # can be removed
     def remove(file_to_remove):
