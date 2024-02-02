@@ -103,10 +103,6 @@ def lunch(config):
             checkbox.grid(row=i+2, column=0, pady=5, padx=10, sticky=W)
             if ending in config["bad_endings"]:
                 checkbox.select()
-        # ur_ending = Label(lunch_window, text="Enter your own ending below:")
-        # ur_ending.grid(row=len(default_config["bad_endings"])+2, column=0, pady=5, padx=10, sticky=W)
-        # entry = Entry(lunch_window, fg="grey")
-        # entry.grid(row=len(default_config["bad_endings"])+3, column=0, pady=5, sticky=W, padx=10)
         add_e_btn = Button(lunch_window, text="Add ending", command=lambda: add_page("ending"))
         add_e_btn.grid(row=len(default_config["bad_endings"])+2, column=0, pady=5)
         names_label = Label(lunch_window, text="Names:")
@@ -219,7 +215,6 @@ def menu(pot_threats, on_remove):
     page_index = 0
 
     def handle_remove(selected_f, grid_rows):
-        # print(selected_f)
         results = on_remove(selected_f)
         if results:
             row_to_name = [row[0] for row in grid_rows]
