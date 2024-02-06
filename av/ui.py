@@ -20,36 +20,6 @@ SHIELD_LOGO = """⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣄⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"""
 
-CAUTION = """                                                                                        
-                                                                                        
-                ░░░░                                                                    
-                                                                                        
-                                            ██                                          
-                                          ██░░██                                        
-  ░░          ░░                        ██░░░░░░██                            ░░░░      
-                                      ██░░░░░░░░░░██                                    
-                                      ██░░░░░░░░░░██                                    
-                                    ██░░░░░░░░░░░░░░██                                  
-                                  ██░░░░░░██████░░░░░░██                                
-                                  ██░░░░░░██████░░░░░░██                                
-                                ██░░░░░░░░██████░░░░░░░░██                              
-                                ██░░░░░░░░██████░░░░░░░░██                              
-                              ██░░░░░░░░░░██████░░░░░░░░░░██                            
-                            ██░░░░░░░░░░░░██████░░░░░░░░░░░░██                          
-                            ██░░░░░░░░░░░░██████░░░░░░░░░░░░██                          
-                          ██░░░░░░░░░░░░░░██████░░░░░░░░░░░░░░██                        
-                          ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░██                        
-                        ██░░░░░░░░░░░░░░░░██████░░░░░░░░░░░░░░░░██                      
-                        ██░░░░░░░░░░░░░░░░██████░░░░░░░░░░░░░░░░██                      
-                      ██░░░░░░░░░░░░░░░░░░██████░░░░░░░░░░░░░░░░░░██                    
-        ░░            ██░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░██                    
-                        ██████████████████████████████████████████                      
-                                                                                        
-                                                                                        
-                                                                                        
-                                                                                        
-                  ░░                                                                    
-"""
 
 TITLE_FONT = ("TkDefaultFont", 16)
 
@@ -77,13 +47,13 @@ def lunch(config):
                                                   f"execute permission check",
                                command=lambda: change_exe(check_exe_btn))
         check_exe_btn.pack(pady=5)
-        lunch_btn = Button(lunch_window, text="Lunch with modified configuration",
-                           command=lambda: lunch_window.destroy())
-        lunch_btn.pack(pady=5)
         reset_btn = Button(lunch_window, text="Reset to default configuration",
                            command=reset)
         reset_btn.pack(pady=5)
-
+        lunch_btn = Button(lunch_window, text="Lunch with modified configuration",
+                           command=lambda: lunch_window.destroy())
+        lunch_btn.pack(pady=5)
+        
     def change_exe(exe_btn):
         toggle = exe_btn.cget("text").split()[0]
         if toggle == "Disable":
