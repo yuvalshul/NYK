@@ -60,6 +60,10 @@ def clear_window(window):
 
 
 def lunch(config):
+    def reset():
+        lunch_window.destroy()
+        lunch(reset_config)
+
     def change_config():
         clear_window(lunch_window)
         lunch_window.title("Configuration Menu")
@@ -76,6 +80,9 @@ def lunch(config):
         lunch_btn = Button(lunch_window, text="Lunch with modified configuration",
                            command=lambda: lunch_window.destroy())
         lunch_btn.pack(pady=5)
+        reset_btn = Button(lunch_window, text="Reset to default configuration",
+                           command=reset)
+        reset_btn.pack(pady=5)
 
     def change_exe(exe_btn):
         toggle = exe_btn.cget("text").split()[0]
@@ -166,6 +173,7 @@ def lunch(config):
             config[key].remove(e)
 
     default_config = copy.deepcopy(config)
+    reset_config = copy.deepcopy(config)
     lunch_window = Tk()
     lunch_window.title("Lunch Window")
     lunch_window.config(padx=5, pady=5)
