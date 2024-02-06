@@ -117,6 +117,8 @@ def lunch(config):
 
         def add_page(key):
             clear_window(lunch_window)
+            b_btn = Button(lunch_window, text="Back", command=inspect_endings)
+            b_btn.pack(pady=5)
             ur_ending = Label(lunch_window, text=f"Enter your own {key} below:")
             ur_ending.pack(pady=5)
             entry = Entry(lunch_window)
@@ -303,10 +305,10 @@ def menu(pot_threats, on_remove):
 
     def put_av_labels():
         av_label = Label(menu_window, text="AntiVirus", font=("TkDefaultFont", 16))
-        av_label.grid(row=0, column=0, columnspan=3)
+        av_label.grid(row=0, column=0, columnspan=4)
 
         shield_label = Label(menu_window, text=SHIELD_LOGO)
-        shield_label.grid(row=1, column=0, columnspan=3)
+        shield_label.grid(row=1, column=0, columnspan=4)
 
     def handle_next():
         nonlocal page_index
@@ -334,13 +336,18 @@ def menu(pot_threats, on_remove):
         else:
             if page_index < len(pages)-1:
                 next_btn = Button(menu_window, text="Next Page", command=handle_next)
-                next_btn.grid(row=2, column=2, pady=10, sticky=W)
+                next_btn.grid(row=2, column=3, pady=10, sticky=W)
 
             if page_index > 0:
                 prev_btn = Button(menu_window, text="Prev Page", command=handle_prev)
                 prev_btn.grid(row=2, column=0, pady=10, sticky=W)
 
             return 3
+
+    def show_path(path):
+        w = Tk()
+        Label(w, text=path, pady=10, padx=5).pack()
+        w.wait_window()
 
     def display_menu():
         put_av_labels()
@@ -352,31 +359,33 @@ def menu(pot_threats, on_remove):
         base_indent = nav_btns()
 
         for i in range(len(curr_page)):
-            checkbox = Checkbutton(menu_window, text=curr_page[i], wraplength=300,
+            fn = curr_page[i].split("\\")[-1]
+            checkbox = Checkbutton(menu_window, text=fn, wraplength=300,
                                    command=lambda index=i: handle_check(curr_page[index], selected_files))
-            checkbox.grid(row=i + base_indent, column=0, pady=5, sticky=W)
+            checkbox.grid(row=i+base_indent, column=0, pady=5, sticky=W)
 
             vt_btn = Button(menu_window, text="VirusTotal", command=lambda index=i: handle_vt(curr_page[index]))
-            vt_btn.grid(row=i + base_indent, column=2, pady=5, padx=2)
+            vt_btn.grid(row=i+base_indent, column=2, pady=5, padx=2)
 
             # trust_btn = Button(window, text="Trust File", command=lambda index=i: print(f"handle_trust({curr_page[index]})"))
             # trust_btn.grid(row=i + base_indent, column=3, pady=5, padx=2)
+            sfp_btn = Button(menu_window, text="Full Path", command=lambda index=i: show_path(curr_page[index]))
+            sfp_btn.grid(row=i+base_indent, column=3, pady=5, padx=2)
 
             if displayable(curr_page[i]):
                 display_button = Button(menu_window, text="Display", command=lambda index=i: display_file(curr_page[index]))
                 display_button.grid(row=i + base_indent, column=1, pady=5, padx=2)
-                rows.append((curr_page[i], checkbox, display_button, vt_btn))
+                rows.append((curr_page[i], checkbox, display_button, vt_btn, sfp_btn))
             else:
-                rows.append((curr_page[i], checkbox, vt_btn))
+                rows.append((curr_page[i], checkbox, vt_btn, sfp_btn))
 
         remove_btn = Button(menu_window, text="Remove Selected Files", font=("TkDefaultFont", 13), fg="red",
                             command=lambda: handle_remove(selected_files, rows))
-        remove_btn.grid(row=len(curr_page) + base_indent, column=0, pady=5, columnspan=3)
+        remove_btn.grid(row=len(curr_page) + base_indent, column=0, pady=5, columnspan=4)
 
         cont_btn = Button(menu_window, text="End Scan", font=("TkDefaultFont", 13), fg="green",
                           command=lambda: menu_window.destroy())
-        cont_btn.grid(row=len(curr_page) + base_indent + 1, column=0, pady=5, columnspan=3)
-
+        cont_btn.grid(row=len(curr_page) + base_indent + 1, column=0, pady=5, columnspan=4)
         menu_window.wait_window()
 
     display_menu()
