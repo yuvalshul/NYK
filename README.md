@@ -1,4 +1,4 @@
-# AntiVirus for Flash Drive
+# Anti-Virus for Flash Drive
 
 ## Overview
 
