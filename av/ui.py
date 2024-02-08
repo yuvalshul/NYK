@@ -231,7 +231,6 @@ def menu(pot_threats, on_remove):
             safe_label = Label(vt_window, text="According to VirusTotal this file is SAFE", fg="green")
             safe_label.pack(pady=5)
         else:
-            Label(vt_window, text=CAUTION).pack(pady=5)
             unsafe_label = Label(vt_window,
                                  text=f"VirusTotal reported {output['positives']} "
                                       f"engines found that this file might be malicious",
