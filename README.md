@@ -26,10 +26,10 @@ The project uses platform-specific methods to detect flash drives and provides a
 4. Follow on-screen instructions to scan and manage threats.
 
 ## Prerequisites
-1. Python 3.x installed on your system.
-2. Operating system – Linux or Windows.
-3. Proper permission on your system for: accessing all the directories of the drive, and modifying, deleting and reading for all the files in the drive.
-4. Network access – If the user wishes using the option of deep scanning with VirusTotal.
+- Python 3.x installed on your system.
+- Operating system – Linux or Windows.
+- Proper permission on your system for: accessing all the directories of the drive, and modifying, deleting and reading for all the files in the drive.
+- Network access – If the user wishes using the option of deep scanning with VirusTotal.
 
 ## Project Structure
 - __main__.py: Entry point for the antivirus application.
