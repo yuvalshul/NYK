@@ -188,14 +188,14 @@ def end_popup(window: Tk) -> None:
 
 
 # the menu where the user can interact with the potential threats tha Anti-Virus found and perform operations on them
-def menu(pot_threats: list[str], on_remove: Callable):
+def menu(pot_threats: list[str], on_remove: Callable) -> None:
     menu_window = Tk()
     menu_window.config(pady=10, padx=10)
     menu_window.title("Menu")
     pages = [pot_threats[i:i+7] for i in range(0, len(pot_threats), 7)]
     page_index = 0
 
-    def handle_remove(selected_f, grid_rows):
+    def handle_remove(selected_f: list[str], grid_rows: list[tuple]) -> None:
         results = on_remove(selected_f)
         if results:
             row_to_name = [row[0] for row in grid_rows]
@@ -217,7 +217,7 @@ def menu(pot_threats: list[str], on_remove: Callable):
             clear_window(menu_window)
             display_menu()
 
-    def handle_vt(file_path):
+    def handle_vt(file_path: str) -> None:
         vt_window = Tk()
         vt_window.config(pady=10, padx=10)
         vt_window.title("VirusTotal Scan")
@@ -247,11 +247,11 @@ def menu(pot_threats: list[str], on_remove: Callable):
 
         vt_window.wait_window()
 
-    def handle_check(checked_path, selected_paths):
+    def handle_check(checked_path: str, selected_paths: list[str]) -> None:
         selected_paths.append(checked_path) if checked_path not in selected_paths \
             else selected_paths.remove(checked_path)
 
-    def display_file(file):
+    def display_file(file: str) -> None:
         try:
             with open(file, "r") as f:
                 content = f.read().strip()
@@ -284,26 +284,26 @@ def menu(pot_threats: list[str], on_remove: Callable):
 
         display_window.wait_window()
 
-    def put_av_labels():
+    def put_av_labels() -> None:
         av_label = Label(menu_window, text="AntiVirus", font=("TkDefaultFont", 16))
         av_label.grid(row=0, column=0, columnspan=4)
 
         shield_label = Label(menu_window, text=SHIELD_LOGO)
         shield_label.grid(row=1, column=0, columnspan=4)
 
-    def handle_next():
+    def handle_next() -> None:
         nonlocal page_index
         page_index += 1
         clear_window(menu_window)
         display_menu()
 
-    def handle_prev():
+    def handle_prev() -> None:
         nonlocal page_index
         page_index -= 1
         clear_window(menu_window)
         display_menu()
 
-    def displayable(file):
+    def displayable(file: str) -> bool:
         try:
             with open(file, "r") as f:
                 f.read(10)
@@ -311,7 +311,7 @@ def menu(pot_threats: list[str], on_remove: Callable):
         except Exception:
             return False
 
-    def nav_btns():
+    def nav_btns() -> int:
         if len(pages) <= 1:
             return 2
         else:
@@ -325,12 +325,12 @@ def menu(pot_threats: list[str], on_remove: Callable):
 
             return 3
 
-    def show_path(path):
+    def show_path(path: str) -> None:
         w = Tk()
         Label(w, text=path, pady=10, padx=5).pack()
         w.wait_window()
 
-    def display_menu():
+    def display_menu() -> None:
         put_av_labels()
 
         curr_page = pages[page_index]

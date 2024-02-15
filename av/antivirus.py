@@ -5,7 +5,6 @@ import time
 import ui
 from utils import Scanner, Drive
 from tkinter import Tk, messagebox
-from typing import Union
 
 # default configuration
 config = {
@@ -135,7 +134,7 @@ class AntiVirus:
         ui.menu(pot_threats, on_remove=self.remove)
 
     # the func that being triggered once the user decide to remove files that been prompts in the menu
-    def remove(self, files_to_remove: list[str]) -> Union[list[bool], bool, None]:
+    def remove(self, files_to_remove: list[str]) -> list[bool] | bool | None:
         if len(files_to_remove) == 0:
             messagebox.showinfo(
                 title="No Selected Files",

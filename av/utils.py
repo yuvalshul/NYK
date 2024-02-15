@@ -1,6 +1,5 @@
 # this module has 2 classes: Scanner and Drive that the AntiVirus class use for better organized and clear code
 import os
-from typing import LiteralString
 
 
 class Drive:
@@ -45,17 +44,17 @@ class Scanner:
         self.config = config  # contains all the "rules" that decides whether a file might be harmful - users choice
 
     # the logic of scanning the flash drive
-    def scan(self, flash_drive: Drive) -> list[LiteralString | str | bytes]:
+    def scan(self, flash_drive: Drive) -> list[str]:
         pot_threats = []
         for root, dirs, files in os.walk(flash_drive.name):
             for file in files:
-                file_path = os.path.join(root, file)
+                file_path = str(os.path.join(root, file))
                 if self.potential_threat(file, file_path):
                     pot_threats.append(file_path)
         return pot_threats
 
     # decides if a file is a potential threat
-    def potential_threat(self, dir_name: str, dir_path: LiteralString | str | bytes) -> bool:
+    def potential_threat(self, dir_name: str, dir_path: str) -> bool:
         return self.bad_ending(dir_name) or self.bad_name(dir_name) or self.check_exe(dir_path)
 
     # check if the file ends with an ending we think might be problematic
