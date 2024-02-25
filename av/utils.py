@@ -75,7 +75,7 @@ class Scanner:
     # uses the OS to remove a specific file
     @staticmethod  # can be removed
     def remove(file_to_remove):
-       os.remove(file_to_remove)
+        os.remove(file_to_remove)
 
 
 # parsing a shell line into drive name, drive type and drive id

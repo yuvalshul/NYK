@@ -38,6 +38,7 @@ class AntiVirus:
     # the Windows Anti-Virus logic
     def _win_av(self) -> None:
         ui.start_popup(self.window)
+        print("Anti-Virus is active and scanning...")
         while True:  # listener
             try:
                 out = subprocess.check_output(args='wmic logicaldisk get DriveType, caption, VolumeSerialNumber',
@@ -56,6 +57,7 @@ class AntiVirus:
     def _lin_av(self) -> None:
         import pyudev  # only work on linux
         ui.start_popup(self.window)
+        print("Anti-Virus is active and scanning...")
         context = pyudev.Context()
         monitor = pyudev.Monitor.from_netlink(context)
         monitor.filter_by(subsystem='block', device_type='disk')
@@ -152,8 +154,11 @@ class AntiVirus:
                     results.append(True)
                 except OSError:
                     results.append(False)
+                    messagebox.showinfo(
+                        title="Error Removing File",
+                        message=f"Could not remove {file} duo to an OSError."
+                    )
 
             return results
-            # give the user info about which files we weren't able to remove due to os error
         else:
             return False
