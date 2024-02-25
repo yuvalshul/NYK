@@ -38,10 +38,7 @@ class AntiVirus:
     # the Windows Anti-Virus logic
     def _win_av(self) -> None:
         ui.start_popup(self.window)
-        i = 0
         while True:  # listener
-            i += 1
-            print(f"loop{i}")
             try:
                 out = subprocess.check_output(args='wmic logicaldisk get DriveType, caption, VolumeSerialNumber',
                                               shell=True)  # question the OS about its connected drive directly
